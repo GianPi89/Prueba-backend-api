@@ -43,6 +43,52 @@ const register = async (req, res) => {
   }
 };
 
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validaciones básicas
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email y contraseña son obligatorios",
+      });
+    }
+
+    // Buscar usuario
+    const user = await User.findByEmail(email);
+    if (!user) {
+      return res.status(401).json({
+        message: "Credenciales inválidas",
+      });
+    }
+
+    // Comparar contraseñas
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        message: "Credenciales inválidas",
+      });
+    }
+
+    // Login exitoso
+    return res.status(200).json({
+      message: "Login exitoso",
+      user: {
+        id: user.id,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Error interno del servidor",
+    });
+  }
+};
+
+
 module.exports = {
   register,
+  login,
 };
+

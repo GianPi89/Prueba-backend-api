@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const pool = require("./config/database");
 
 const authRoutes = require("./routes/auth.routes");
 
@@ -13,7 +12,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 
 app.get("/", (req, res) => {
-  res.json({ message: "API Fintech funcionando" });
+  res.json({ message: "API funcionando" });
 });
 
 module.exports = app;
