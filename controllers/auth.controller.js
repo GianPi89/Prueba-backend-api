@@ -5,20 +5,6 @@ const register = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validaciones básicas
-    if (!email || !password) {
-      return res.status(400).json({
-        message: "Email y contraseña son obligatorios",
-      });
-    }
-
-    if (password.length < 6) {
-      return res.status(400).json({
-        message: "La contraseña debe tener al menos 6 caracteres",
-      });
-    }
-
-    // Verificar si el usuario existe
     const existingUser = await User.findByEmail(email);
     if (existingUser) {
       return res.status(409).json({
@@ -26,10 +12,7 @@ const register = async (req, res) => {
       });
     }
 
-    // Encriptar contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Crear usuario
     await User.create(email, hashedPassword);
 
     return res.status(201).json({
@@ -47,14 +30,6 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validaciones básicas
-    if (!email || !password) {
-      return res.status(400).json({
-        message: "Email y contraseña son obligatorios",
-      });
-    }
-
-    // Buscar usuario
     const user = await User.findByEmail(email);
     if (!user) {
       return res.status(401).json({
@@ -62,7 +37,6 @@ const login = async (req, res) => {
       });
     }
 
-    // Comparar contraseñas
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({
@@ -70,7 +44,6 @@ const login = async (req, res) => {
       });
     }
 
-    // Login exitoso
     return res.status(200).json({
       message: "Login exitoso",
       user: {
@@ -86,9 +59,7 @@ const login = async (req, res) => {
   }
 };
 
-
 module.exports = {
   register,
   login,
 };
-
